@@ -1,7 +1,9 @@
-History.txt
+.autotest
+CHANGELOG.rdoc
 Manifest.txt
-README.txt
+README.rdoc
 Rakefile
-bin/hana
 lib/hana.rb
+test/helper.rb
 test/test_hana.rb
+test/test_patch.rb
