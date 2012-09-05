@@ -1,7 +1,6 @@
-require 'minitest/autorun'
-require 'hana'
+require 'helper'
 
-class TestHana < MiniTest::Unit::TestCase
+class TestHana < Hana::TestCase
   def test_split_many
     pointer = Hana::Pointer.new '/foo/bar/baz'
     assert_equal %w{ foo bar baz }, pointer.to_a
