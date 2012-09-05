@@ -1,26 +1,36 @@
 = hana
 
-* FIX (url)
+* http://github.com/tenderlove/hana
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Implementation of JSON Patch and JSON Pointer drafts.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+Implements draft specs of the JSON Patch and JSON pointer spec:
+
+  * http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-01
+  * http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-03
+
+These are drafts, so it could change.  This works against Ruby objects, so you
+should load the JSON to Ruby, process it, then emit as JSON again.
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+    patch = Hana::Patch.new [
+      { 'add' => '/baz', 'value' => 'qux' }
+    ]
+    
+    patch.apply('foo' => 'bar') # => {'baz' => 'qux', 'foo' => 'bar'}
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* Ruby
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* gem install hana
 
 == LICENSE:
 
