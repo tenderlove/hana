@@ -1,12 +1,12 @@
-= hana
+# hana
 
 * http://github.com/tenderlove/hana
 
-== DESCRIPTION:
+## DESCRIPTION:
 
 Implementation of JSON Patch and JSON Pointer drafts.
 
-== FEATURES/PROBLEMS:
+## FEATURES/PROBLEMS:
 
 Implements draft specs of the JSON Patch and JSON pointer spec:
 
@@ -16,23 +16,25 @@ Implements draft specs of the JSON Patch and JSON pointer spec:
 These are drafts, so it could change.  This works against Ruby objects, so you
 should load the JSON to Ruby, process it, then emit as JSON again.
 
-== SYNOPSIS:
+## SYNOPSIS:
 
-    patch = Hana::Patch.new [
-      { 'add' => '/baz', 'value' => 'qux' }
-    ]
-    
-    patch.apply('foo' => 'bar') # => {'baz' => 'qux', 'foo' => 'bar'}
+```ruby
+patch = Hana::Patch.new [
+  { 'add' => '/baz', 'value' => 'qux' }
+]
 
-== REQUIREMENTS:
+patch.apply('foo' => 'bar') # => {'baz' => 'qux', 'foo' => 'bar'}
+```
+
+## REQUIREMENTS:
 
 * Ruby
 
-== INSTALL:
+## INSTALL:
 
-* gem install hana
+    $ gem install hana
 
-== LICENSE:
+## LICENSE:
 
 (The MIT License)
 
