@@ -12,9 +12,7 @@ module Hana
       @path.each { |x| yield x }
     end
 
-    def to_a
-      @path.dup
-    end
+    def to_a; @path.dup; end
 
     def eval object
       Pointer.eval @path, object
@@ -40,11 +38,9 @@ module Hana
     end
 
     def apply doc
-      doc = doc.dup
-      @is.each { |ins|
+      @is.each_with_object(doc) { |ins, doc|
         send ins.keys.sort.first, ins, doc
       }
-      doc
     end
 
     private
@@ -78,7 +74,7 @@ module Hana
       dest = Pointer.eval(to, doc)
 
       if Array === dest
-        dest.insert(to_key.to_i, obj)
+        dest.insert to_key.to_i, obj
       else
         dest[to_key] = obj
       end

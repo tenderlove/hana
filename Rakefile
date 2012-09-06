@@ -10,7 +10,7 @@ Hoe.plugin :git     # `gem install hoe-git`
 
 Hoe.spec 'hana' do
   developer('Aaron Patterson', 'aaron@tenderlovemaking.com')
-  self.readme_file   = 'README.rdoc'
+  self.readme_file   = 'README.md'
   self.history_file  = 'CHANGELOG.rdoc'
   self.extra_rdoc_files  = FileList['*.rdoc']
 end
