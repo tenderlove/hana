@@ -4,14 +4,12 @@
 
 ## DESCRIPTION:
 
-Implementation of JSON Patch and JSON Pointer drafts.
+Implementation of [JSON Patch][1] and [JSON Pointer][2] drafts.
 
 ## FEATURES/PROBLEMS:
 
-Implements draft specs of the JSON Patch and JSON pointer spec:
+Implements draft specs of the [JSON Patch][1] and [JSON pointer][2] spec:
 
-  * http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-01
-  * http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-03
 
 These are drafts, so it could change.  This works against Ruby objects, so you
 should load the JSON to Ruby, process it, then emit as JSON again.
@@ -58,3 +56,6 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[1]: http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-03
+[2]: http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-01
