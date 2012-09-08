@@ -1,3 +1,7 @@
+Fri Sep  7 18:54:17 2012  Aaron Patterson <aaron@tenderlovemaking.com>
+
+	* Bumping the version.
+
 Fri Sep  7 18:53:16 2012  Aaron Patterson <aaron@tenderlovemaking.com>
 
 	* validate commands an raise an exception Just In Case
