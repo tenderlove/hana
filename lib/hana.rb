@@ -37,9 +37,13 @@ module Hana
       @is = is
     end
 
+    VALID = Hash[%w{ add move test replace remove }.map { |x| [x,x]}] # :nodoc:
+
     def apply doc
       @is.each_with_object(doc) { |ins, doc|
-        send ins.keys.sort.first, ins, doc
+        send VALID.fetch(ins.keys.sort.first) { |k|
+          raise Exception, "bad method `#{k}`"
+        }, ins, doc
       }
     end
 

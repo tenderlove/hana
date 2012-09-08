@@ -2,6 +2,15 @@ require 'helper'
 
 module Hana
   class TestPatch < TestCase
+    def test_no_eval
+      patch = Hana::Patch.new [
+        { 'eval' => '1' }
+      ]
+      assert_raises(Hana::Patch::Exception) do
+        patch.apply('foo' => 'bar')
+      end
+    end
+
     def test_add_member
       patch = Hana::Patch.new [
         { 'add' => '/baz', 'value' => 'qux' }
