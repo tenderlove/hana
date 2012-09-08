@@ -1,7 +1,7 @@
 .autotest
 CHANGELOG.rdoc
 Manifest.txt
-README.rdoc
+README.md
 Rakefile
 lib/hana.rb
 test/helper.rb
