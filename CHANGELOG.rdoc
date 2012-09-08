@@ -1,6 +1,4 @@
-=== 1.0.0 / 2012-09-05
+Fri Sep  7 18:53:16 2012  Aaron Patterson <aaron@tenderlovemaking.com>
 
-* 1 major enhancement
-
-  * Birthday!
+	* validate commands an raise an exception Just In Case
 
