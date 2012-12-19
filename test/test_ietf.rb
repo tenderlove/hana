@@ -15,8 +15,6 @@ module Hana
         doc   = test['doc']
         patch = test['patch']
 
-        skip "copy doesn't make sense" if patch.any? {|ins| ins['op'] == 'copy'}
-
         patch = Hana::Patch.new patch
 
         if test['error']

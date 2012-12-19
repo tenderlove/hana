@@ -75,7 +75,21 @@ module Hana
     private
 
     def copy ins, doc
-      raise NotImplementedError
+      from     = Pointer.parse ins['from']
+      to       = Pointer.parse ins['path']
+      from_key = from.pop
+      key      = to.pop
+
+      src  = Pointer.eval(from, doc)
+
+      if Array === src
+        obj = src[from_key.to_i]
+      else
+        obj = src.fetch from_key
+      end
+
+      dest = Pointer.eval(to, doc)
+      add_op dest, key, obj
     end
 
     def add ins, doc
