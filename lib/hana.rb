@@ -23,9 +23,18 @@ module Hana
     end
 
     def self.parse path
+      return [''] if path == '/'
+
       path.sub(/^\//, '').split(/(?<!\^)\//).map { |part|
-        part.gsub(/\^([\/^])/, '\1')
+        part.gsub!(/\^([\/^])/, '\1')
+        part.gsub!(/~1/, '/')
+        part.gsub!(/~0/, '~')
+        part
       }
+    end
+
+    def self.parse2 path
+      path.sub(/^\//, '').split(/(?<!\^)\//)
     end
   end
 
@@ -33,36 +42,61 @@ module Hana
     class Exception < StandardError
     end
 
+    class FailedTestException < Exception
+      attr_accessor :path, :value
+
+      def initialize path, value
+        super "expected #{value} at #{path}"
+        @path  = path
+        @value = value
+      end
+    end
+
+    class OutOfBoundsException < Exception
+    end
+    class ObjectOperationOnArrayException < Exception
+    end
+
     def initialize is
       @is = is
     end
 
-    VALID = Hash[%w{ add move test replace remove }.map { |x| [x,x]}] # :nodoc:
+    VALID = Hash[%w{ add move test replace remove copy }.map { |x| [x,x]}] # :nodoc:
 
     def apply doc
-      @is.each_with_object(doc) { |ins, doc|
-        send VALID.fetch(ins.keys.sort.first) { |k|
+      @is.each_with_object(doc) { |ins, d|
+        send VALID.fetch(ins['op'].strip) { |k|
           raise Exception, "bad method `#{k}`"
-        }, ins, doc
+        }, ins, d
       }
     end
 
     private
 
+    def copy ins, doc
+      raise NotImplementedError
+    end
+
     def add ins, doc
-      list = Pointer.parse ins['add']
+      list = Pointer.parse ins['path']
       key  = list.pop
       obj  = Pointer.eval list, doc
 
       if Array === obj
-        obj.insert key.to_i, ins['value']
+        raise ObjectOperationOnArrayException unless key =~ /\A-?\d+\Z/
+
+        idx = key.to_i
+
+        raise OutOfBoundsException if idx > obj.length || idx < 0
+
+        obj.insert idx, ins['value']
       else
         obj[key] = ins['value']
       end
     end
 
     def move ins, doc
-      from     = Pointer.parse ins['move']
+      from     = Pointer.parse ins['path']
       to       = Pointer.parse ins['to']
       from_key = from.pop
       to_key   = to.pop
@@ -85,18 +119,27 @@ module Hana
     end
 
     def test ins, doc
-      expected = Pointer.new(ins['test']).eval doc
-      raise Exception unless expected == ins['value']
+      expected = Pointer.new(ins['path']).eval doc
+
+      unless expected == ins['value']
+        raise FailedTestException.new(ins['value'], ins['path'])
+      end
     end
 
     def replace ins, doc
-      list = Pointer.parse ins['replace']
+      list = Pointer.parse ins['path']
       key  = list.pop
-      Pointer.eval(list, doc)[key] = ins['value']
+      obj  = Pointer.eval list, doc
+
+      if Array === obj
+        obj[key.to_i] = ins['value']
+      else
+        obj[key] = ins['value']
+      end
     end
 
     def remove ins, doc
-      list = Pointer.parse ins['remove']
+      list = Pointer.parse ins['path']
       key  = list.pop
       obj  = Pointer.eval list, doc
 

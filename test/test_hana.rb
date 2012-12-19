@@ -1,6 +1,15 @@
 require 'helper'
 
 class TestHana < Hana::TestCase
+  def test_no_eval
+    patch = Hana::Patch.new [
+      { 'op' => 'eval', 'value' => '1' }
+    ]
+    assert_raises(Hana::Patch::Exception) do
+      patch.apply('foo' => 'bar')
+    end
+  end
+
   def test_split_many
     pointer = Hana::Pointer.new '/foo/bar/baz'
     assert_equal %w{ foo bar baz }, pointer.to_a
@@ -8,7 +17,7 @@ class TestHana < Hana::TestCase
 
   def test_root
     pointer = Hana::Pointer.new '/'
-    assert_equal [], pointer.to_a
+    assert_equal [''], pointer.to_a
   end
 
   def test_escape
