@@ -33,7 +33,7 @@ module Hana
 
     def ex msg
       case msg
-      when /Out of bounds/ then Hana::Patch::OutOfBoundsException
+      when /Out of bounds/i then Hana::Patch::OutOfBoundsException
       when /Object operation on array/ then
         Hana::Patch::ObjectOperationOnArrayException
       else

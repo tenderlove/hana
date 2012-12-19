@@ -1,3 +1,0 @@
-[submodule "test/json-patch-tests"]
-	path = test/json-patch-tests
-	url = https://github.com/mikemccabe/json-patch-tests.git

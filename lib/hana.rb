@@ -54,6 +54,7 @@ module Hana
 
     class OutOfBoundsException < Exception
     end
+
     class ObjectOperationOnArrayException < Exception
     end
 
@@ -80,26 +81,17 @@ module Hana
     def add ins, doc
       list = Pointer.parse ins['path']
       key  = list.pop
-      obj  = Pointer.eval list, doc
+      dest = Pointer.eval list, doc
+      obj  = ins['value']
 
-      if Array === obj
-        raise ObjectOperationOnArrayException unless key =~ /\A-?\d+\Z/
-
-        idx = key.to_i
-
-        raise OutOfBoundsException if idx > obj.length || idx < 0
-
-        obj.insert idx, ins['value']
-      else
-        obj[key] = ins['value']
-      end
+      add_op dest, key, obj
     end
 
     def move ins, doc
       from     = Pointer.parse ins['path']
       to       = Pointer.parse ins['to']
       from_key = from.pop
-      to_key   = to.pop
+      key      = to.pop
 
       src  = Pointer.eval(from, doc)
 
@@ -110,12 +102,7 @@ module Hana
       end
 
       dest = Pointer.eval(to, doc)
-
-      if Array === dest
-        dest.insert to_key.to_i, obj
-      else
-        dest[to_key] = obj
-      end
+      add_op dest, key, obj
     end
 
     def test ins, doc
@@ -147,6 +134,21 @@ module Hana
         obj.delete_at key.to_i
       else
         obj.delete key
+      end
+    end
+
+    def check_index obj, key
+      raise ObjectOperationOnArrayException unless key =~ /\A-?\d+\Z/
+      idx = key.to_i
+      raise OutOfBoundsException if idx > obj.length || idx < 0
+      idx
+    end
+
+    def add_op dest, key, obj
+      if Array === dest
+        dest.insert check_index(dest, key), obj
+      else
+        dest[key] = obj
       end
     end
   end
