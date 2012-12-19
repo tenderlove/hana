@@ -88,8 +88,8 @@ module Hana
     end
 
     def move ins, doc
-      from     = Pointer.parse ins['path']
-      to       = Pointer.parse ins['to']
+      from     = Pointer.parse ins['from']
+      to       = Pointer.parse ins['path']
       from_key = from.pop
       key      = to.pop
 
