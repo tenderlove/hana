@@ -32,10 +32,6 @@ module Hana
         part
       }
     end
-
-    def self.parse2 path
-      path.sub(/^\//, '').split(/(?<!\^)\//)
-    end
   end
 
   class Patch
@@ -100,8 +96,8 @@ module Hana
       to       = Pointer.parse ins['path']
       from_key = from.pop
       key      = to.pop
-
-      src  = Pointer.eval(from, doc)
+      src      = Pointer.eval from, doc
+      dest     = Pointer.eval to, doc
 
       if Array === src
         obj = src.fetch from_key.to_i
@@ -109,7 +105,6 @@ module Hana
         obj = src.fetch from_key
       end
 
-      dest = Pointer.eval(to, doc)
       add_op dest, key, obj
     end
 
