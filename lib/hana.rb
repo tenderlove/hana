@@ -8,15 +8,14 @@ module Hana
       @path = Pointer.parse path
     end
 
-    def each
-      @path.each { |x| yield x }
-    end
-
-    def to_a; @path.dup; end
+    def each(&block); @path.each(&block); end
+    def to_a;         @path.dup; end
 
     def eval object
       Pointer.eval @path, object
     end
+
+    ESC = {'^/' => '/', '^^' => '^', '~0' => '~', '~1' => '/'} # :nodoc:
 
     def self.eval list, object
       list.inject(object) { |o, part| o[(Array === o ? part.to_i : part)] }
@@ -25,11 +24,8 @@ module Hana
     def self.parse path
       return [''] if path == '/'
 
-      path.sub(/^\//, '').split(/(?<!\^)\//).map { |part|
-        part.gsub!(/\^([\/^])/, '\1')
-        part.gsub!(/~1/, '/')
-        part.gsub!(/~0/, '~')
-        part
+      path.sub(/^\//, '').split(/(?<!\^)\//).map! { |part|
+        part.gsub!(/\^[\/^]|~[01]/) { |m| ESC[m] }; part
       }
     end
   end
