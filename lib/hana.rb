@@ -70,7 +70,7 @@ module Hana
 
     def apply doc
       @is.each_with_object(doc) { |ins, d|
-        send VALID.fetch(ins['op'].strip) { |k|
+        send VALID.fetch(ins[OP].strip) { |k|
           raise Exception, "bad method `#{k}`"
         }, ins, d
       }
@@ -78,13 +78,18 @@ module Hana
 
     private
 
+    PATH  = 'path' # :nodoc:
+    FROM  = 'from' # :nodoc:
+    VALUE = 'value' # :nodoc:
+    OP    = 'op' # :nodoc:
+
     def add ins, doc
-      list = Pointer.parse ins['path']
+      list = Pointer.parse ins[PATH]
       key  = list.pop
       dest = Pointer.eval list, doc
-      obj  = ins['value']
+      obj  = ins[VALUE]
 
-      raise(MissingTargetException, ins['path']) unless dest
+      raise(MissingTargetException, ins[PATH]) unless dest
 
       if key
         add_op dest, key, obj
@@ -94,8 +99,8 @@ module Hana
     end
 
     def move ins, doc
-      from     = Pointer.parse ins['from']
-      to       = Pointer.parse ins['path']
+      from     = Pointer.parse ins[FROM]
+      to       = Pointer.parse ins[PATH]
       from_key = from.pop
       key      = to.pop
       src      = Pointer.eval from, doc
@@ -106,8 +111,8 @@ module Hana
     end
 
     def copy ins, doc
-      from     = Pointer.parse ins['from']
-      to       = Pointer.parse ins['path']
+      from     = Pointer.parse ins[FROM]
+      to       = Pointer.parse ins[PATH]
       from_key = from.pop
       key      = to.pop
       src      = Pointer.eval from, doc
@@ -124,28 +129,28 @@ module Hana
     end
 
     def test ins, doc
-      expected = Pointer.new(ins['path']).eval doc
+      expected = Pointer.new(ins[PATH]).eval doc
 
-      unless expected == ins['value']
-        raise FailedTestException.new(ins['value'], ins['path'])
+      unless expected == ins[VALUE]
+        raise FailedTestException.new(ins[VALUE], ins[PATH])
       end
     end
 
     def replace ins, doc
-      list = Pointer.parse ins['path']
+      list = Pointer.parse ins[PATH]
       key  = list.pop
       obj  = Pointer.eval list, doc
 
       if Array === obj
         raise Patch::IndexError unless key =~ /\A\d+\Z/
-        obj[key.to_i] = ins['value']
+        obj[key.to_i] = ins[VALUE]
       else
-        obj[key] = ins['value']
+        obj[key] = ins[VALUE]
       end
     end
 
     def remove ins, doc
-      list = Pointer.parse ins['path']
+      list = Pointer.parse ins[PATH]
       key  = list.pop
       obj  = Pointer.eval list, doc
       rm_op obj, key
