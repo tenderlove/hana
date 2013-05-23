@@ -72,7 +72,11 @@ module Hana
       dest = Pointer.eval list, doc
       obj  = ins['value']
 
-      add_op dest, key, obj
+      if key
+        add_op dest, key, obj
+      else
+        dest.replace obj
+      end
     end
 
     def move ins, doc
