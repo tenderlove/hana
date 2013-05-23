@@ -12,4 +12,9 @@ module Hana
 
     skip(/A\.13/, 'This test depends on the JSON parser')
   end
+
+  class MyTests < TestCase
+    filename = File.join TESTDIR, 'mine.json'
+    include read_test_json_file filename
+  end
 end

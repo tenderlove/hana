@@ -21,7 +21,7 @@ module Hana
             patch = Hana::Patch.new patch
 
             if test['error']
-              assert_raises(ex(test['error'])) do
+              assert_raises(*ex(test['error'])) do
                 patch.apply doc
               end
             else
@@ -42,15 +42,17 @@ module Hana
 
     def ex msg
       case msg
-      when /Out of bounds/i then Hana::Patch::OutOfBoundsException
+      when /Out of bounds/i then [Hana::Patch::OutOfBoundsException]
       when /Object operation on array/ then
-        Hana::Patch::ObjectOperationOnArrayException
+        [Hana::Patch::ObjectOperationOnArrayException]
       when /test op shouldn't get array element/ then
-        Hana::Patch::IndexException
+        [Hana::Patch::IndexError, Hana::Patch::ObjectOperationOnArrayException]
+      when /bad number$/ then
+        [Hana::Patch::IndexError, Hana::Patch::ObjectOperationOnArrayException]
       when /missing|non-existant/ then
-        Hana::Patch::MissingTargetException
+        [Hana::Patch::MissingTargetException]
       else
-        Hana::Patch::FailedTestException
+        [Hana::Patch::FailedTestException]
       end
     end
   end

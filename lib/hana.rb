@@ -20,7 +20,7 @@ module Hana
     def self.eval list, object
       list.inject(object) { |o, part|
         if Array === o
-          raise Patch::IndexException unless part =~ /\A\d+\Z/
+          raise Patch::IndexError unless part =~ /\A\d+\Z/
           part = part.to_i
         end
         o[part]
@@ -56,7 +56,7 @@ module Hana
     class ObjectOperationOnArrayException < Exception
     end
 
-    class IndexException < Exception
+    class IndexError < Exception
     end
 
     class MissingTargetException < Exception
@@ -114,6 +114,7 @@ module Hana
       dest     = Pointer.eval to, doc
 
       if Array === src
+        raise Patch::IndexError unless from_key =~ /\A\d+\Z/
         obj = src.fetch from_key.to_i
       else
         obj = src.fetch from_key
@@ -136,6 +137,7 @@ module Hana
       obj  = Pointer.eval list, doc
 
       if Array === obj
+        raise Patch::IndexError unless key =~ /\A\d+\Z/
         obj[key.to_i] = ins['value']
       else
         obj[key] = ins['value']
@@ -168,6 +170,7 @@ module Hana
 
     def rm_op obj, key
       if Array === obj
+        raise Patch::IndexError unless key =~ /\A\d+\Z/
         obj.delete_at key.to_i
       else
         obj.delete key
