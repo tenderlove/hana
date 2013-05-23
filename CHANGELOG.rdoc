@@ -1,3 +1,7 @@
+Wed May 22 19:28:10 2013  Aaron Patterson <aaron@tenderlovemaking.com>
+
+	* All IETF compliant
+
 Fri Sep  7 18:54:17 2012  Aaron Patterson <aaron@tenderlovemaking.com>
 
 	* Bumping the version.

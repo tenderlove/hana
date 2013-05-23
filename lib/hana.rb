@@ -1,5 +1,5 @@
 module Hana
-  VERSION = '1.1.0'
+  VERSION = '1.2.0'
 
   class Pointer
     include Enumerable
@@ -18,7 +18,13 @@ module Hana
     ESC = {'^/' => '/', '^^' => '^', '~0' => '~', '~1' => '/'} # :nodoc:
 
     def self.eval list, object
-      list.inject(object) { |o, part| o[(Array === o ? part.to_i : part)] }
+      list.inject(object) { |o, part|
+        if Array === o
+          raise Patch::IndexException unless part =~ /\A\d+\Z/
+          part = part.to_i
+        end
+        o[part]
+      }
     end
 
     def self.parse path
@@ -48,6 +54,9 @@ module Hana
     end
 
     class ObjectOperationOnArrayException < Exception
+    end
+
+    class IndexException < Exception
     end
 
     def initialize is
@@ -109,7 +118,11 @@ module Hana
     end
 
     def test ins, doc
-      expected = Pointer.new(ins['path']).eval doc
+      begin
+        expected = Pointer.new(ins['path']).eval doc
+      rescue Patch::IndexException
+        raise FailedTestException.new(ins['value'], ins['path'])
+      end
 
       unless expected == ins['value']
         raise FailedTestException.new(ins['value'], ins['path'])
