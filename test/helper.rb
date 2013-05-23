@@ -2,6 +2,6 @@ require 'minitest/autorun'
 require 'hana'
 
 module Hana
-  class TestCase < MiniTest::Unit::TestCase
+  class TestCase < Minitest::Test
   end
 end
