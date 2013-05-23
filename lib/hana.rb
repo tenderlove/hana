@@ -118,11 +118,7 @@ module Hana
     end
 
     def test ins, doc
-      begin
-        expected = Pointer.new(ins['path']).eval doc
-      rescue Patch::IndexException
-        raise FailedTestException.new(ins['value'], ins['path'])
-      end
+      expected = Pointer.new(ins['path']).eval doc
 
       unless expected == ins['value']
         raise FailedTestException.new(ins['value'], ins['path'])

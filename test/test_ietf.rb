@@ -34,6 +34,8 @@ module Hana
       when /Out of bounds/i then Hana::Patch::OutOfBoundsException
       when /Object operation on array/ then
         Hana::Patch::ObjectOperationOnArrayException
+      when /test op shouldn't get array element/ then
+        Hana::Patch::IndexException
       else
         Hana::Patch::FailedTestException
       end
