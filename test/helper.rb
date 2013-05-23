@@ -32,6 +32,12 @@ module Hana
       }
     end
 
+    def self.skip regexp, message
+      instance_methods.grep(regexp).each do |method|
+        define_method(method) { skip message }
+      end
+    end
+
     private
 
     def ex msg
@@ -41,6 +47,8 @@ module Hana
         Hana::Patch::ObjectOperationOnArrayException
       when /test op shouldn't get array element/ then
         Hana::Patch::IndexException
+      when /missing|non-existant/ then
+        Hana::Patch::MissingTargetException
       else
         Hana::Patch::FailedTestException
       end

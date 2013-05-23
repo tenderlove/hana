@@ -59,6 +59,9 @@ module Hana
     class IndexException < Exception
     end
 
+    class MissingTargetException < Exception
+    end
+
     def initialize is
       @is = is
     end
@@ -80,6 +83,8 @@ module Hana
       key  = list.pop
       dest = Pointer.eval list, doc
       obj  = ins['value']
+
+      raise(MissingTargetException, ins['path']) unless dest
 
       if key
         add_op dest, key, obj
