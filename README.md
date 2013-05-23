@@ -4,11 +4,11 @@
 
 ## DESCRIPTION:
 
-Implementation of [JSON Patch][1] and [JSON Pointer][2] drafts.
+Implementation of [JSON Patch][1] and [JSON Pointer][2] RFC.
 
 ## FEATURES/PROBLEMS:
 
-Implements draft specs of the [JSON Patch][1] and [JSON pointer][2] spec:
+Implements RFC specs of the [JSON Patch][1] and [JSON pointer][2] spec:
 
 
 These are drafts, so it could change.  This works against Ruby objects, so you
@@ -36,7 +36,7 @@ patch.apply('foo' => 'bar') # => {'baz' => 'qux', 'foo' => 'bar'}
 
 (The MIT License)
 
-Copyright (c) 2012 Aaron Patterson
+Copyright (c) 2012-2013 Aaron Patterson
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -57,5 +57,5 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[1]: http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-03
-[2]: http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-01
+[1]: https://datatracker.ietf.org/doc/rfc6902/
+[2]: http://tools.ietf.org/html/rfc6901
