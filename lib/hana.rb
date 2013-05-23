@@ -132,6 +132,8 @@ module Hana
     end
 
     def check_index obj, key
+      return -1 if key == '-'
+
       raise ObjectOperationOnArrayException unless key =~ /\A-?\d+\Z/
       idx = key.to_i
       raise OutOfBoundsException if idx > obj.length || idx < 0
