@@ -9,7 +9,6 @@ module Hana
     end
 
     def each(&block); @path.each(&block); end
-    def to_a;         @path.dup; end
 
     def eval object
       Pointer.eval @path, object

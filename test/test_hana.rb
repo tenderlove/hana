@@ -10,6 +10,14 @@ class TestHana < Hana::TestCase
     end
   end
 
+  def test_mutate_to_a_does_not_impact_original
+    pointer = Hana::Pointer.new '/foo/bar/baz'
+    x = pointer.to_a
+    x << "omg"
+    assert_equal %w{ foo bar baz omg }, x
+    assert_equal %w{ foo bar baz }, pointer.to_a
+  end
+
   def test_split_many
     pointer = Hana::Pointer.new '/foo/bar/baz'
     assert_equal %w{ foo bar baz }, pointer.to_a
