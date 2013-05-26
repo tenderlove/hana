@@ -7,7 +7,7 @@ module JSON
       # When the application loads, this will cause Rails to know
       # how to serve up the proper type.
       initializer 'hana' do
-        Mime::Type.register 'application/json-patch+json', :hana
+        Mime::Type.register 'application/json-patch+json', :json_patch
       end
     end
   end
