@@ -18,6 +18,8 @@ module Hana
 
     def self.eval list, object
       list.inject(object) { |o, part|
+        return nil unless o
+
         if Array === o
           raise Patch::IndexError unless part =~ /\A\d+\Z/
           part = part.to_i

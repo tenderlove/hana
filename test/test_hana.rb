@@ -56,4 +56,12 @@ class TestHana < Hana::TestCase
     pointer = Hana::Pointer.new '/foo/1'
     assert_equal 'baz', pointer.eval('foo' => { '1' => 'baz' })
   end
+
+  def test_eval_many_below_missing
+    pointer = Hana::Pointer.new '/baz/foo/bar'
+    assert_nil pointer.eval('foo' => 'bar')
+
+    pointer = Hana::Pointer.new '/foo/bar/baz'
+    assert_nil pointer.eval('foo' => nil)
+  end
 end
