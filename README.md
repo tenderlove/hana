@@ -8,11 +8,10 @@ Implementation of [JSON Patch][1] and [JSON Pointer][2] RFC.
 
 ## FEATURES/PROBLEMS:
 
-Implements RFC specs of the [JSON Patch][1] and [JSON pointer][2] spec:
+Implements specs of the [JSON Patch][1] and [JSON pointer][2] RFCs:
 
-
-These are drafts, so it could change.  This works against Ruby objects, so you
-should load the JSON to Ruby, process it, then emit as JSON again.
+This works against Ruby objects, so you should load the JSON to Ruby,
+process it, then emit as JSON again.
 
 ## SYNOPSIS:
 
