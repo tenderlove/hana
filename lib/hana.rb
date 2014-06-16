@@ -1,4 +1,4 @@
-require 'railtie' if defined?(Rails)
+require 'hana/railtie' if defined?(Rails)
 
 module Hana
   VERSION = '1.2.1'
