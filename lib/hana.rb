@@ -88,7 +88,7 @@ module Hana
       list = Pointer.parse ins[PATH]
       key  = list.pop
       dest = Pointer.eval list, doc
-      obj  = ins[VALUE]
+      obj  = ins.fetch VALUE
 
       raise(MissingTargetException, ins[PATH]) unless dest
 
@@ -101,7 +101,7 @@ module Hana
     end
 
     def move ins, doc
-      from     = Pointer.parse ins[FROM]
+      from     = Pointer.parse ins.fetch FROM
       to       = Pointer.parse ins[PATH]
       from_key = from.pop
       key      = to.pop
@@ -114,7 +114,7 @@ module Hana
     end
 
     def copy ins, doc
-      from     = Pointer.parse ins[FROM]
+      from     = Pointer.parse ins.fetch FROM
       to       = Pointer.parse ins[PATH]
       from_key = from.pop
       key      = to.pop
@@ -135,7 +135,7 @@ module Hana
     def test ins, doc
       expected = Pointer.new(ins[PATH]).eval doc
 
-      unless expected == ins[VALUE]
+      unless expected == ins.fetch(VALUE)
         raise FailedTestException.new(ins[VALUE], ins[PATH])
       end
       doc
@@ -146,11 +146,13 @@ module Hana
       key  = list.pop
       obj  = Pointer.eval list, doc
 
+      return ins.fetch VALUE unless key
+
       if Array === obj
         raise Patch::IndexError unless key =~ /\A\d+\Z/
-        obj[key.to_i] = ins[VALUE]
+        obj[key.to_i] = ins.fetch VALUE
       else
-        obj[key] = ins[VALUE]
+        obj[key] = ins.fetch VALUE
       end
       doc
     end

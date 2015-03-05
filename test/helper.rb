@@ -49,7 +49,11 @@ module Hana
         [Hana::Patch::IndexError, Hana::Patch::ObjectOperationOnArrayException]
       when /bad number$/ then
         [Hana::Patch::IndexError, Hana::Patch::ObjectOperationOnArrayException]
-      when /missing|non-existant/ then
+      when /missing '(from|value)' parameter/ then
+        [KeyError]
+      when /Unrecognized op 'spam'/ then
+        [Hana::Patch::Exception]
+      when /missing|non-existent/ then
         [Hana::Patch::MissingTargetException]
       else
         [Hana::Patch::FailedTestException]
