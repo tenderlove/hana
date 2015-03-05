@@ -70,7 +70,7 @@ module Hana
     VALID = Hash[%w{ add move test replace remove copy }.map { |x| [x,x]}] # :nodoc:
 
     def apply doc
-      @is.each_with_object(doc) { |ins, d|
+      @is.inject(doc) { |d, ins|
         send VALID.fetch(ins[OP].strip) { |k|
           raise Exception, "bad method `#{k}`"
         }, ins, d
@@ -97,6 +97,7 @@ module Hana
       else
         dest.replace obj
       end
+      doc
     end
 
     def move ins, doc
@@ -109,6 +110,7 @@ module Hana
 
       obj = rm_op src, from_key
       add_op dest, key, obj
+      doc
     end
 
     def copy ins, doc
@@ -127,6 +129,7 @@ module Hana
       end
 
       add_op dest, key, obj
+      doc
     end
 
     def test ins, doc
@@ -135,6 +138,7 @@ module Hana
       unless expected == ins[VALUE]
         raise FailedTestException.new(ins[VALUE], ins[PATH])
       end
+      doc
     end
 
     def replace ins, doc
@@ -148,6 +152,7 @@ module Hana
       else
         obj[key] = ins[VALUE]
       end
+      doc
     end
 
     def remove ins, doc
@@ -155,6 +160,7 @@ module Hana
       key  = list.pop
       obj  = Pointer.eval list, doc
       rm_op obj, key
+      doc
     end
 
     def check_index obj, key
