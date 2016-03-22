@@ -17,7 +17,7 @@ process it, then emit as JSON again.
 
 ```ruby
 patch = Hana::Patch.new [
-  { 'add' => '/baz', 'value' => 'qux' }
+  { 'op' => 'add', 'path' => '/baz', 'value' => 'qux' }
 ]
 
 patch.apply('foo' => 'bar') # => {'baz' => 'qux', 'foo' => 'bar'}
