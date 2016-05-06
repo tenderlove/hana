@@ -23,6 +23,11 @@ class TestHana < Hana::TestCase
     assert_equal %w{ foo bar baz }, pointer.to_a
   end
 
+  def test_split_with_trailing
+    pointer = Hana::Pointer.new '/foo/'
+    assert_equal ["foo", ""], pointer.to_a
+  end
+
   def test_root
     pointer = Hana::Pointer.new '/'
     assert_equal [''], pointer.to_a
