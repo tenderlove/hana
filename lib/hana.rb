@@ -31,10 +31,9 @@ module Hana
     def self.parse path
       return [''] if path == '/'
 
-      parts =
-        path.sub(/^\//, '').split(/(?<!\^)\//).each { |part|
-          part.gsub!(/\^[\/^]|~[01]/) { |m| ESC[m] }
-        }
+      parts = path.sub(/^\//, '').split(/(?<!\^)\//).each { |part|
+        part.gsub!(/\^[\/^]|~[01]/) { |m| ESC[m] }
+      }
 
       parts.push("") if path[-1] == '/'
       parts
