@@ -4,6 +4,7 @@ Manifest.txt
 README.md
 Rakefile
 lib/hana.rb
+lib/hana/railtie.rb
 test/helper.rb
 test/json-patch-tests/README.md
 test/json-patch-tests/spec_tests.json
