@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hana
   VERSION = '1.3.2'
 
