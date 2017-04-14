@@ -21,7 +21,7 @@ module Hana
         return nil unless o
 
         if Array === o
-          raise Patch::IndexError unless part =~ /\A\d+\Z/
+          raise Patch::IndexError unless part =~ /\A(?:\d|[1-9]\d+)\Z/
           part = part.to_i
         end
         o[part]
@@ -188,8 +188,11 @@ module Hana
     def rm_op obj, key
       if Array === obj
         raise Patch::IndexError unless key =~ /\A\d+\Z/
-        obj.delete_at key.to_i
+        key = key.to_i
+        raise Patch::OutOfBoundsException if key >= obj.length
+        obj.delete_at key
       else
+        raise Patch::IndexError unless obj.key? key
         obj.delete key
       end
     end
