@@ -12,7 +12,16 @@ module Hana
         tests.each_with_index do |test, i|
           next unless test['doc']
 
-          define_method("test_#{test['comment'] || i }") do
+          method = "test_#{test['comment'] || i }"
+          loop do
+            if method_defined? method
+              method = "test_#{test['comment'] || i } x"
+            else
+              break
+            end
+          end
+
+          define_method(method) do
             skip "disabled" if test['disabled']
 
             doc   = test['doc']
