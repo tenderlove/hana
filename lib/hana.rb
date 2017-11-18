@@ -157,6 +157,7 @@ module Hana
         raise Patch::IndexError unless key =~ /\A\d+\Z/
         obj[key.to_i] = ins.fetch VALUE
       else
+        raise Patch::MissingTargetException unless obj
         obj[key] = ins.fetch VALUE
       end
       doc
