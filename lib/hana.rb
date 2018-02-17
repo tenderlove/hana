@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hana
-  VERSION = '1.3.3'
+  VERSION = '1.3.4'
 
   class Pointer
     include Enumerable
