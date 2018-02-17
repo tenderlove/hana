@@ -100,7 +100,11 @@ module Hana
       if key
         add_op dest, key, obj
       else
-        dest.replace obj
+        if doc.equal? dest
+          doc = obj
+        else
+          dest.replace obj
+        end
       end
       doc
     end
