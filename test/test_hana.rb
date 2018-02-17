@@ -69,4 +69,43 @@ class TestHana < Hana::TestCase
     pointer = Hana::Pointer.new '/foo/bar/baz'
     assert_nil pointer.eval('foo' => nil)
   end
+
+  def test_remove_missing_object_key
+    patch = Hana::Patch.new [
+      { 'op' => 'remove', 'path' => '/missing_key' }
+    ]
+    assert_raises(Hana::Patch::IndexError) do
+      patch.apply('foo' => 'bar')
+    end
+  end
+
+  def test_remove_missing_array_index
+    patch = Hana::Patch.new [
+      { 'op' => 'remove', 'path' => '/1' }
+    ]
+    assert_raises(Hana::Patch::OutOfBoundsException) do
+      patch.apply([0])
+    end
+  end
+
+  def test_remove_missing_object_key_in_array
+    patch = Hana::Patch.new [
+      { 'op' => 'remove', 'path' => '/1/baz' }
+    ]
+    assert_raises(Hana::Patch::IndexError) do
+      patch.apply([
+        { 'foo' => 'bar' },
+        { 'foo' => 'bar' }
+      ])
+    end
+  end
+
+  def test_replace_missing_key
+    patch = Hana::Patch.new [
+      { 'op' => 'replace', 'path' => '/missing_key/field', 'value' => 'asdf' }
+    ]
+    assert_raises(Hana::Patch::MissingTargetException) do
+      patch.apply('foo' => 'bar')
+    end
+  end
 end
