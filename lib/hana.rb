@@ -6,6 +6,12 @@ module Hana
   class Pointer
     include Enumerable
 
+    class Exception < StandardError
+    end
+
+    class FormatError < Exception
+    end
+
     def initialize path
       @path = Pointer.parse path
     end
@@ -32,6 +38,11 @@ module Hana
 
     def self.parse path
       return [''] if path == '/'
+      return []   if path == ''
+
+      unless path.start_with? '/'
+        raise FormatError, "JSON Pointer should start with a slash"
+      end
 
       parts = path.sub(/^\//, '').split(/(?<!\^)\//).each { |part|
         part.gsub!(/\^[\/^]|~[01]/) { |m| ESC[m] }
@@ -68,6 +79,9 @@ module Hana
     class MissingTargetException < Exception
     end
 
+    class InvalidPath < Exception
+    end
+
     def initialize is
       @is = is
     end
@@ -90,12 +104,22 @@ module Hana
     OP    = 'op' # :nodoc:
 
     def add ins, doc
-      list = Pointer.parse ins[PATH]
+      unless ins.key?('path')
+        raise Hana::Patch::InvalidPath, "missing 'path' parameter"
+      end
+
+      path = ins['path']
+
+      unless path
+        raise Hana::Patch::InvalidPath, "null is not valid value for 'path'"
+      end
+
+      list = Pointer.parse path
       key  = list.pop
       dest = Pointer.eval list, doc
       obj  = ins.fetch VALUE
 
-      raise(MissingTargetException, ins[PATH]) unless dest
+      raise(MissingTargetException, ins['path']) unless dest
 
       if key
         add_op dest, key, obj
@@ -117,6 +141,12 @@ module Hana
       src      = Pointer.eval from, doc
       dest     = Pointer.eval to, doc
 
+      unless Array === src
+        unless src.key? from_key
+          raise Hana::Patch::MissingTargetException
+        end
+      end
+
       obj = rm_op src, from_key
       add_op dest, key, obj
       doc
@@ -134,7 +164,11 @@ module Hana
         raise Patch::IndexError unless from_key =~ /\A\d+\Z/
         obj = src.fetch from_key.to_i
       else
-        obj = src.fetch from_key
+        begin
+          obj = src.fetch from_key
+        rescue KeyError => e
+          raise Hana::Patch::MissingTargetException, e.message
+        end
       end
 
       add_op dest, key, obj

@@ -67,8 +67,12 @@ module Hana
         [KeyError]
       when /Unrecognized op 'spam'/ then
         [Hana::Patch::Exception]
+      when /missing 'path'|null is not valid value for 'path'/ then
+        [Hana::Patch::InvalidPath]
       when /missing|non-existent/ then
         [Hana::Patch::MissingTargetException]
+      when /JSON Pointer should start with a slash/ then
+        [Hana::Pointer::FormatError]
       else
         [Hana::Patch::FailedTestException]
       end
