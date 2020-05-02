@@ -79,7 +79,7 @@ class TestHana < Hana::TestCase
     end
   end
 
-  def test_remove_deep_missing_object_key
+  def test_remove_deep_missing_path
     patch = Hana::Patch.new [
       { 'op' => 'remove', 'path' => '/missing_key1/missing_key2' }
     ]
