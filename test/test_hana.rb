@@ -79,6 +79,15 @@ class TestHana < Hana::TestCase
     end
   end
 
+  def test_remove_deep_missing_path
+    patch = Hana::Patch.new [
+      { 'op' => 'remove', 'path' => '/missing_key1/missing_key2' }
+    ]
+    assert_raises(Hana::Patch::IndexError) do
+      patch.apply('foo' => 'bar')
+    end
+  end
+
   def test_remove_missing_array_index
     patch = Hana::Patch.new [
       { 'op' => 'remove', 'path' => '/1' }

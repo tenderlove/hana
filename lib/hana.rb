@@ -233,7 +233,7 @@ module Hana
         raise Patch::OutOfBoundsException if key >= obj.length
         obj.delete_at key
       else
-        raise Patch::IndexError unless obj.key? key
+        raise Patch::IndexError unless obj&.key? key
         obj.delete key
       end
     end
