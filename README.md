@@ -35,7 +35,7 @@ patch.apply('foo' => 'bar') # => {'baz' => 'qux', 'foo' => 'bar'}
 
 (The MIT License)
 
-Copyright (c) 2012-2016 Aaron Patterson
+Copyright (c) 2012-2020 Aaron Patterson
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
