@@ -60,7 +60,7 @@ module Hana
       when /bad number$/ then
         [Hana::Patch::IndexError, Hana::Patch::ObjectOperationOnArrayException]
       when /removing a nonexistent (field|index)/ then
-        [Hana::Patch::IndexError, Hana::Patch::OutOfBoundsException]
+        [Hana::Patch::MissingTargetException, Hana::Patch::OutOfBoundsException]
       when /test op should reject the array value, it has leading zeros/ then
         [Hana::Patch::IndexError]
       when /missing '(from|value)' parameter/ then
