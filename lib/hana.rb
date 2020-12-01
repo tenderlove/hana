@@ -227,11 +227,8 @@ module Hana
       if Array === dest
         dest.insert check_index(dest, key), obj
       else
-        begin
-          dest[key] = obj
-        rescue ::IndexError, ::NoMethodError
-          raise Patch::InvalidObjectOperationException, "cannot add key '#{key}' to non-object"
-        end
+        raise Patch::InvalidObjectOperationException, "cannot add key '#{key}' to non-object" unless Hash === dest
+        dest[key] = obj
       end
     end
 
@@ -245,7 +242,7 @@ module Hana
         begin
           raise Patch::MissingTargetException, "key '#{key}' not found" unless obj&.key? key
           obj.delete key
-        rescue ::IndexError, ::NoMethodError
+        rescue ::NoMethodError
           raise Patch::InvalidObjectOperationException, "cannot remove key '#{key}' from non-object"
         end
       end
