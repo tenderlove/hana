@@ -114,7 +114,7 @@ module Hana
       dest = Pointer.eval list, doc
       obj  = ins.fetch VALUE
 
-      raise(MissingTargetException, "unable to find path '#{ins['path']}'") unless dest
+      raise(MissingTargetException, "target location '#{ins['path']}' does not exist") unless dest
 
       if key
         add_op dest, key, obj
@@ -137,7 +137,7 @@ module Hana
       src      = Pointer.eval from, doc
       dest     = Pointer.eval to, doc
 
-      raise(MissingTargetException, "unable to find path '#{ins['path']}'") unless dest
+      raise(MissingTargetException, "target location '#{ins['path']}' does not exist") unless dest
 
       obj = rm_op src, from_key
       add_op dest, key, obj
@@ -160,11 +160,11 @@ module Hana
         begin
           obj = src.fetch from_key
         rescue KeyError, NoMethodError
-          raise Hana::Patch::MissingTargetException, "key '#{from_key} not found"
+          raise Hana::Patch::MissingTargetException, "'from' location '#{ins.fetch FROM}' does not exist"
         end
       end
 
-      raise(MissingTargetException, "unable to find path '#{ins['path']}'") unless dest
+      raise(MissingTargetException, "target location '#{ins['path']}' does not exist") unless dest
 
       add_op dest, key, obj
       doc
