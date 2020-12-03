@@ -31,6 +31,27 @@ patch.apply('foo' => 'bar') # => {'baz' => 'qux', 'foo' => 'bar'}
 
     $ gem install hana
 
+## DEVELOPMENT:
+
+hana runs tests from [json-patch/json-patch-tests](https://github.com/json-patch/json-patch-tests). Fetch the git submodule by running:
+
+```bash
+git submodule init
+git submodule update
+```
+
+Install dependencies with:
+
+```bash
+bundle install
+```
+
+Then run the tests with:
+
+```bash
+rake test
+```
+
 ## LICENSE:
 
 (The MIT License)
