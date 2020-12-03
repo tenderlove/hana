@@ -93,7 +93,7 @@ module Hana
 
     def apply doc
       @is.inject(doc) { |d, ins|
-        send VALID.fetch(ins[OP].strip) { |k|
+        send VALID.fetch(ins['op'].strip) { |k|
           raise Exception, "bad method `#{k}`"
         }, ins, d
       }
@@ -101,10 +101,8 @@ module Hana
 
     private
 
-    PATH  = 'path' # :nodoc:
     FROM  = 'from' # :nodoc:
     VALUE = 'value' # :nodoc:
-    OP    = 'op' # :nodoc:
 
     def add ins, doc
       path = get_path ins
@@ -174,7 +172,7 @@ module Hana
       expected = Pointer.new(path).eval doc
 
       unless expected == ins.fetch(VALUE)
-        raise FailedTestException.new(ins[PATH], ins[VALUE])
+        raise FailedTestException.new(ins['path'], ins[VALUE])
       end
       doc
     end
