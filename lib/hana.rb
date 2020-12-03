@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hana
-  VERSION = '1.3.6'
+  VERSION = '1.3.7'
 
   class Pointer
     include Enumerable
@@ -107,7 +107,6 @@ module Hana
     OP    = 'op' # :nodoc:
 
     def add ins, doc
-
       path = get_path ins
       list = Pointer.parse path
       key  = list.pop
