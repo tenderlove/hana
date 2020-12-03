@@ -73,6 +73,9 @@ module Hana
     class ObjectOperationOnArrayException < Exception
     end
 
+    class InvalidObjectOperationException < Exception
+    end
+
     class IndexError < Exception
     end
 
@@ -104,22 +107,14 @@ module Hana
     OP    = 'op' # :nodoc:
 
     def add ins, doc
-      unless ins.key?('path')
-        raise Hana::Patch::InvalidPath, "missing 'path' parameter"
-      end
 
-      path = ins['path']
-
-      unless path
-        raise Hana::Patch::InvalidPath, "null is not valid value for 'path'"
-      end
-
+      path = get_path ins
       list = Pointer.parse path
       key  = list.pop
       dest = Pointer.eval list, doc
       obj  = ins.fetch VALUE
 
-      raise(MissingTargetException, ins['path']) unless dest
+      raise(MissingTargetException, "target location '#{ins['path']}' does not exist") unless dest
 
       if key
         add_op dest, key, obj
@@ -134,18 +129,15 @@ module Hana
     end
 
     def move ins, doc
+      path = get_path ins
       from     = Pointer.parse ins.fetch FROM
-      to       = Pointer.parse ins[PATH]
+      to       = Pointer.parse path
       from_key = from.pop
       key      = to.pop
       src      = Pointer.eval from, doc
       dest     = Pointer.eval to, doc
 
-      unless Array === src
-        unless src.key? from_key
-          raise Hana::Patch::MissingTargetException
-        end
-      end
+      raise(MissingTargetException, "target location '#{ins['path']}' does not exist") unless dest
 
       obj = rm_op src, from_key
       add_op dest, key, obj
@@ -153,68 +145,81 @@ module Hana
     end
 
     def copy ins, doc
+      path = get_path ins
       from     = Pointer.parse ins.fetch FROM
-      to       = Pointer.parse ins[PATH]
+      to       = Pointer.parse path
       from_key = from.pop
       key      = to.pop
       src      = Pointer.eval from, doc
       dest     = Pointer.eval to, doc
 
       if Array === src
-        raise Patch::IndexError unless from_key =~ /\A\d+\Z/
+        raise Patch::ObjectOperationOnArrayException, "cannot apply non-numeric key '#{key}' to array" unless from_key =~ /\A\d+\Z/
         obj = src.fetch from_key.to_i
       else
         begin
           obj = src.fetch from_key
-        rescue KeyError => e
-          raise Hana::Patch::MissingTargetException, e.message
+        rescue KeyError, NoMethodError
+          raise Hana::Patch::MissingTargetException, "'from' location '#{ins.fetch FROM}' does not exist"
         end
       end
+
+      raise(MissingTargetException, "target location '#{ins['path']}' does not exist") unless dest
 
       add_op dest, key, obj
       doc
     end
 
     def test ins, doc
-      expected = Pointer.new(ins[PATH]).eval doc
+      path = get_path ins
+      expected = Pointer.new(path).eval doc
 
       unless expected == ins.fetch(VALUE)
-        raise FailedTestException.new(ins[VALUE], ins[PATH])
+        raise FailedTestException.new(ins[PATH], ins[VALUE])
       end
       doc
     end
 
     def replace ins, doc
-      list = Pointer.parse ins[PATH]
+      path = get_path ins
+      list = Pointer.parse path
       key  = list.pop
       obj  = Pointer.eval list, doc
 
       return ins.fetch VALUE unless key
 
-      if Array === obj
-        raise Patch::IndexError unless key =~ /\A\d+\Z/
-        obj[key.to_i] = ins.fetch VALUE
-      else
-        raise Patch::MissingTargetException unless obj
-        obj[key] = ins.fetch VALUE
-      end
+      rm_op obj, key
+      add_op obj, key, ins.fetch(VALUE)
       doc
     end
 
     def remove ins, doc
-      list = Pointer.parse ins[PATH]
+      path = get_path ins
+      list = Pointer.parse path
       key  = list.pop
       obj  = Pointer.eval list, doc
       rm_op obj, key
       doc
     end
 
+    def get_path ins
+      unless ins.key?('path')
+        raise Hana::Patch::InvalidPath, "missing 'path' parameter"
+      end
+
+      unless ins['path']
+        raise Hana::Patch::InvalidPath, "null is not valid value for 'path'"
+      end
+
+      ins['path']
+    end
+
     def check_index obj, key
       return -1 if key == '-'
 
-      raise ObjectOperationOnArrayException unless key =~ /\A-?\d+\Z/
+      raise ObjectOperationOnArrayException, "cannot apply non-numeric key '#{key}' to array" unless key =~ /\A-?\d+\Z/
       idx = key.to_i
-      raise OutOfBoundsException if idx > obj.length || idx < 0
+      raise OutOfBoundsException, "key '#{key}' is out of bounds for array" if idx > obj.length || idx < 0
       idx
     end
 
@@ -222,19 +227,24 @@ module Hana
       if Array === dest
         dest.insert check_index(dest, key), obj
       else
+        raise Patch::InvalidObjectOperationException, "cannot add key '#{key}' to non-object" unless Hash === dest
         dest[key] = obj
       end
     end
 
     def rm_op obj, key
       if Array === obj
-        raise Patch::IndexError unless key =~ /\A\d+\Z/
+        raise Patch::ObjectOperationOnArrayException, "cannot apply non-numeric key '#{key}' to array" unless key =~ /\A\d+\Z/
         key = key.to_i
-        raise Patch::OutOfBoundsException if key >= obj.length
+        raise Patch::OutOfBoundsException, "key '#{key}' is out of bounds for array" if key >= obj.length
         obj.delete_at key
       else
-        raise Patch::IndexError unless obj&.key? key
-        obj.delete key
+        begin
+          raise Patch::MissingTargetException, "key '#{key}' not found" unless obj&.key? key
+          obj.delete key
+        rescue ::NoMethodError
+          raise Patch::InvalidObjectOperationException, "cannot remove key '#{key}' from non-object"
+        end
       end
     end
   end

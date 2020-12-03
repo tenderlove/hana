@@ -74,7 +74,7 @@ class TestHana < Hana::TestCase
     patch = Hana::Patch.new [
       { 'op' => 'remove', 'path' => '/missing_key' }
     ]
-    assert_raises(Hana::Patch::IndexError) do
+    assert_raises(Hana::Patch::MissingTargetException) do
       patch.apply('foo' => 'bar')
     end
   end
@@ -83,7 +83,7 @@ class TestHana < Hana::TestCase
     patch = Hana::Patch.new [
       { 'op' => 'remove', 'path' => '/missing_key1/missing_key2' }
     ]
-    assert_raises(Hana::Patch::IndexError) do
+    assert_raises(Hana::Patch::MissingTargetException) do
       patch.apply('foo' => 'bar')
     end
   end
@@ -101,7 +101,7 @@ class TestHana < Hana::TestCase
     patch = Hana::Patch.new [
       { 'op' => 'remove', 'path' => '/1/baz' }
     ]
-    assert_raises(Hana::Patch::IndexError) do
+    assert_raises(Hana::Patch::MissingTargetException) do
       patch.apply([
         { 'foo' => 'bar' },
         { 'foo' => 'bar' }
