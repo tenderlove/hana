@@ -1,7 +1,12 @@
 # -*- ruby -*-
 
 require 'rubygems'
-require 'hoe'
+begin
+  require 'hoe'
+rescue LoadError
+  Gem.install 'hoe'
+  retry
+end
 
 Hoe.plugins.delete :rubyforge
 Hoe.plugin :minitest
