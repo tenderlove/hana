@@ -89,17 +89,24 @@ module Hana
       @is = is
     end
 
-    VALID = Hash[%w{ add move test replace remove copy }.map { |x| [x,x]}] # :nodoc:
-
     def apply doc
-      @is.inject(doc) { |d, ins|
-        send VALID.fetch(ins['op'].strip) { |k|
-          raise Exception, "bad method `#{k}`"
-        }, ins, d
-      }
+      really_apply doc
     end
 
     private
+
+    whens = %w{ add move test replace remove copy }.map { |x| "when #{x.dump} then #{x}(ins, d)"}.join("; ")
+    class_eval <<~eodispatch, __FILE__, __LINE__ + 1
+      def really_apply doc
+        @is.inject(doc) { |d, ins|
+          case ins['op'].strip
+          #{whens}
+          else
+            raise Exception, "bad method `\#{ins['op']}`"
+          end
+        }
+      end
+    eodispatch
 
     FROM  = 'from' # :nodoc:
     VALUE = 'value' # :nodoc:
