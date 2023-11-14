@@ -51,3 +51,7 @@ Then run the tests with:
 ```bash
 rake test
 ```
+
+[1]: https://datatracker.ietf.org/doc/rfc6902/
+[2]: http://tools.ietf.org/html/rfc6901
+
