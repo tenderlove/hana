@@ -32,5 +32,21 @@
     { "comment": "test add with bad number should fail",
       "doc": ["foo", "sil"],
       "patch": [{"op": "add", "path": "/1e0", "value": "bar"}],
-      "error": "add op shouldn't add to array with bad number" }
+      "error": "add op shouldn't add to array with bad number" },
+
+    { "comment": "test copy object then change copied",
+      "doc": {"foo": {"bar": {"baz": [{"boo": "net"}]}}},
+      "patch": [
+        {"op": "copy", "from": "/foo", "path": "/bak"},
+        {"op": "replace", "path": "/bak/bar/baz/0/boo", "value": "qux"}
+      ],
+      "expected": {"foo": {"bar": {"baz": [{"boo": "net"}]}}, "bak": {"bar": {"baz": [{"boo":"qux"}]}}}},
+
+    { "comment": "test copy object then change source",
+      "doc": {"foo": {"bar": {"baz": [{"boo": "net"}]}}},
+      "patch": [
+        {"op": "copy", "from": "/foo", "path": "/bak"},
+        {"op": "replace", "path": "/foo/bar/baz/0/boo", "value": "qux"}
+      ],
+      "expected": {"foo": {"bar": {"baz": [{"boo": "qux"}]}}, "bak": {"bar": {"baz": [{"boo":"net"}]}}}}
 ]

@@ -170,7 +170,7 @@ module Hana
 
       raise(MissingTargetException, "target location '#{ins['path']}' does not exist") unless dest
 
-      add_op dest, key, obj
+      add_op dest, key, deep_copy(obj)
       doc
     end
 
@@ -250,6 +250,10 @@ module Hana
           raise Patch::InvalidObjectOperationException, "cannot remove key '#{key}' from non-object"
         end
       end
+    end
+
+    def deep_copy(o)
+      Marshal.load(Marshal.dump(o))
     end
   end
 end

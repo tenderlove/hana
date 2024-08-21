@@ -16,6 +16,7 @@ Hoe.plugin :git     # `gem install hoe-git`
 Hoe.spec 'hana' do
   developer('Aaron Patterson', 'aaron@tenderlovemaking.com')
   license 'MIT'
+  self.urls = {}
   self.readme_file   = 'README.md'
   self.extra_rdoc_files  = FileList['*.rdoc']
   extra_dev_deps << ["minitest", "~> 5.0"]
