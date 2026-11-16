@@ -61,7 +61,7 @@ module Hana
         [Hana::Patch::IndexError, Hana::Patch::ObjectOperationOnArrayException]
       when /removing a nonexistent (field|index)/ then
         [Hana::Patch::MissingTargetException, Hana::Patch::OutOfBoundsException]
-      when /test op should reject the array value, it has leading zeros/ then
+      when /op should reject the array value, it has leading zeros/ then
         [Hana::Patch::IndexError]
       when /missing '(from|value)' parameter/ then
         [KeyError]
