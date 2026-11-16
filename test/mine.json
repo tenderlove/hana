@@ -32,5 +32,7 @@
     { "comment": "test add with bad number should fail",
       "doc": ["foo", "sil"],
       "patch": [{"op": "add", "path": "/1e0", "value": "bar"}],
-      "error": "add op shouldn't add to array with bad number" }
+      "error": "add op shouldn't add to array with bad number" },
+
+    {"comment": "test caret in a key is a plain character", "doc": {"a^^b": 1, "a^b": 2}, "patch": [{"op": "replace", "path": "/a^^b", "value": 3}], "expected": {"a^^b": 3, "a^b": 2}}
 ]
