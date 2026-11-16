@@ -34,11 +34,22 @@ class TestHana < Hana::TestCase
   end
 
   def test_escape
-    pointer = Hana::Pointer.new '/f^/oo/bar'
+    pointer = Hana::Pointer.new '/f~1oo/bar'
     assert_equal ['f/oo', 'bar'], pointer.to_a
 
-    pointer = Hana::Pointer.new '/f^^oo/bar'
-    assert_equal ['f^oo', 'bar'], pointer.to_a
+    pointer = Hana::Pointer.new '/f~0oo/~01'
+    assert_equal ['f~oo', '~1'], pointer.to_a
+  end
+
+  # RFC 6901 has two escapes, ~0 and ~1: a caret is a plain character
+  def test_caret_is_not_an_escape
+    pointer = Hana::Pointer.new '/f^/oo/b^^ar'
+    assert_equal ['f^', 'oo', 'b^^ar'], pointer.to_a
+  end
+
+  def test_split_with_empty_segments
+    pointer = Hana::Pointer.new '//'
+    assert_equal ['', ''], pointer.to_a
   end
 
   def test_eval_hash

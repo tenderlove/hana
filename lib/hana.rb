@@ -22,7 +22,7 @@ module Hana
       Pointer.eval @path, object
     end
 
-    ESC = {'^/' => '/', '^^' => '^', '~0' => '~', '~1' => '/'} # :nodoc:
+    ESC = {'~0' => '~', '~1' => '/'} # :nodoc:
 
     def self.eval list, object
       list.inject(object) { |o, part|
@@ -44,12 +44,9 @@ module Hana
         raise FormatError, "JSON Pointer should start with a slash"
       end
 
-      parts = path.sub(/^\//, '').split(/(?<!\^)\//).each { |part|
-        part.gsub!(/\^[\/^]|~[01]/) { |m| ESC[m] }
+      path.sub(/^\//, '').split('/', -1).each { |part|
+        part.gsub!(/~[01]/) { |m| ESC[m] }
       }
-
-      parts.push("") if path[-1] == '/'
-      parts
     end
   end
 
