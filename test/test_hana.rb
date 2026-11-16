@@ -41,6 +41,11 @@ class TestHana < Hana::TestCase
     assert_equal ['f^oo', 'bar'], pointer.to_a
   end
 
+  def test_bad_escape
+    assert_raises(Hana::Pointer::FormatError) { Hana::Pointer.new '/a/x~2' }
+    assert_raises(Hana::Pointer::FormatError) { Hana::Pointer.new '/a~' }
+  end
+
   def test_eval_hash
     pointer = Hana::Pointer.new '/foo'
     assert_equal 'bar', pointer.eval('foo' => 'bar')

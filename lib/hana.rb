@@ -45,6 +45,7 @@ module Hana
       end
 
       parts = path.sub(/^\//, '').split(/(?<!\^)\//).each { |part|
+        raise FormatError, "a '~' must be followed by 0 or 1 in a JSON Pointer" if part =~ /~(?![01])/
         part.gsub!(/\^[\/^]|~[01]/) { |m| ESC[m] }
       }
 
