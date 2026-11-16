@@ -36,6 +36,22 @@ module Hana
       }
     end
 
+    # Like eval, but a location that does not exist answers the block's value
+    # instead of nil, so a null member and a missing one differ.
+    def self.fetch list, object
+      list.inject(object) { |o, part|
+        if Array === o
+          raise Patch::IndexError unless part =~ /\A(?:\d|[1-9]\d+)\Z/
+          return yield unless part.to_i < o.length
+          o[part.to_i]
+        elsif Hash === o && o.key?(part)
+          o[part]
+        else
+          return yield
+        end
+      }
+    end
+
     def self.parse path
       return [''] if path == '/'
       return []   if path == ''
@@ -176,7 +192,9 @@ module Hana
 
     def test ins, doc
       path = get_path ins
-      expected = Pointer.new(path).eval doc
+      expected = Pointer.fetch(Pointer.parse(path), doc) {
+        raise MissingTargetException, "target location '#{path}' does not exist"
+      }
 
       unless expected == ins.fetch(VALUE)
         raise FailedTestException.new(ins['path'], ins[VALUE])

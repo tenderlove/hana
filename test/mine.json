@@ -32,5 +32,11 @@
     { "comment": "test add with bad number should fail",
       "doc": ["foo", "sil"],
       "patch": [{"op": "add", "path": "/1e0", "value": "bar"}],
-      "error": "add op shouldn't add to array with bad number" }
+      "error": "add op shouldn't add to array with bad number" },
+
+    {"comment": "test against a missing location with null should fail", "doc": {"foo": 1}, "patch": [{"op": "test", "path": "/bar", "value": null}], "error": "test op should fail on a missing location"},
+
+    {"comment": "test against a null member passes", "doc": {"foo": null}, "patch": [{"op": "test", "path": "/foo", "value": null}]},
+
+    {"comment": "test against an index past the end should fail", "doc": {"foo": [1]}, "patch": [{"op": "test", "path": "/foo/1", "value": null}], "error": "test op should fail on a missing location"}
 ]
