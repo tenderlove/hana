@@ -24,12 +24,15 @@ module Hana
 
     ESC = {'^/' => '/', '^^' => '^', '~0' => '~', '~1' => '/'} # :nodoc:
 
+    # RFC 6901 section 4: an array index is 0 or digits without a leading zero
+    INDEX = /\A(?:0|[1-9]\d*)\z/ # :nodoc:
+
     def self.eval list, object
       list.inject(object) { |o, part|
         return nil unless o
 
         if Array === o
-          raise Patch::IndexError unless part =~ /\A(?:\d|[1-9]\d+)\Z/
+          raise Patch::IndexError unless part =~ INDEX
           part = part.to_i
         end
         o[part]
@@ -158,8 +161,9 @@ module Hana
       dest     = Pointer.eval to, doc
 
       if Array === src
-        raise Patch::ObjectOperationOnArrayException, "cannot apply non-numeric key '#{key}' to array" unless from_key =~ /\A\d+\Z/
-        obj = src.fetch from_key.to_i
+        index = array_index from_key
+        raise Patch::OutOfBoundsException, "key '#{from_key}' is out of bounds for array" unless index.between?(0, src.length - 1)
+        obj = src[index]
       else
         begin
           obj = src.fetch from_key
@@ -218,11 +222,18 @@ module Hana
       ins['path']
     end
 
+    # RFC 6901 section 4; a negative number is left to the bounds checks
+    def array_index key
+      raise ObjectOperationOnArrayException, "cannot apply non-numeric key '#{key}' to array" unless key =~ /\A-?\d+\z/
+      raise Patch::IndexError, "array index '#{key}' has a leading zero" if key =~ /\A-?0\d/
+
+      key.to_i
+    end
+
     def check_index obj, key
       return -1 if key == '-'
 
-      raise ObjectOperationOnArrayException, "cannot apply non-numeric key '#{key}' to array" unless key =~ /\A-?\d+\Z/
-      idx = key.to_i
+      idx = array_index key
       raise OutOfBoundsException, "key '#{key}' is out of bounds for array" if idx > obj.length || idx < 0
       idx
     end
@@ -238,9 +249,8 @@ module Hana
 
     def rm_op obj, key
       if Array === obj
-        raise Patch::ObjectOperationOnArrayException, "cannot apply non-numeric key '#{key}' to array" unless key =~ /\A\d+\Z/
-        key = key.to_i
-        raise Patch::OutOfBoundsException, "key '#{key}' is out of bounds for array" if key >= obj.length
+        key = array_index key
+        raise Patch::OutOfBoundsException, "key '#{key}' is out of bounds for array" if key >= obj.length || key < 0
         obj.delete_at key
       else
         begin

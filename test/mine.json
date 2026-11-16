@@ -32,5 +32,17 @@
     { "comment": "test add with bad number should fail",
       "doc": ["foo", "sil"],
       "patch": [{"op": "add", "path": "/1e0", "value": "bar"}],
-      "error": "add op shouldn't add to array with bad number" }
+      "error": "add op shouldn't add to array with bad number" },
+
+    {"comment": "test add with an index with a leading zero should fail", "doc": {"foo": [1, 2, 3]}, "patch": [{"op": "add", "path": "/foo/01", "value": 9}], "error": "add op should reject the array value, it has leading zeros"},
+
+    {"comment": "test remove with an index with a leading zero should fail", "doc": {"foo": [1, 2, 3]}, "patch": [{"op": "remove", "path": "/foo/01"}], "error": "remove op should reject the array value, it has leading zeros"},
+
+    {"comment": "test replace with an index with a leading zero should fail", "doc": {"foo": [1, 2, 3]}, "patch": [{"op": "replace", "path": "/foo/01", "value": 9}], "error": "replace op should reject the array value, it has leading zeros"},
+
+    {"comment": "test move from an index with a leading zero should fail", "doc": {"foo": [1, 2, 3]}, "patch": [{"op": "move", "from": "/foo/01", "path": "/bar"}], "error": "move op should reject the array value, it has leading zeros"},
+
+    {"comment": "test copy from an index with a leading zero should fail", "doc": {"foo": [1, 2, 3]}, "patch": [{"op": "copy", "from": "/foo/01", "path": "/bar"}], "error": "copy op should reject the array value, it has leading zeros"},
+
+    {"comment": "test copy from an index past the end should fail", "doc": {"foo": [1]}, "patch": [{"op": "copy", "from": "/foo/1", "path": "/bar"}], "error": "Out of bounds"}
 ]
